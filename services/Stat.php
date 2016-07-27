@@ -1,6 +1,6 @@
 <?php
 
-namespace plugins\stat\services;
+namespace miaoxing\stat\services;
 
 /**
  * @property \Wei\Db $db

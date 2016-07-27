@@ -1,8 +1,8 @@
 <?php
 
-namespace plugins\stat\docs {
+namespace miaoxing\stat\docs {
     /**
-     * @property    \plugins\stat\services\Stat $stat 统计服务
+     * @property    \miaoxing\stat\services\Stat $stat 统计服务
      */
     class AutoComplete
     {
@@ -11,7 +11,7 @@ namespace plugins\stat\docs {
 
 namespace {
     /**
-     * @return \plugins\stat\docs\AutoComplete
+     * @return \miaoxing\stat\docs\AutoComplete
      */
     function wei()
     {
