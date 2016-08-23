@@ -2,8 +2,11 @@
 
 namespace miaoxing\stat\services;
 
+use miaoxing\plugin\BaseModel;
+
 /**
  * @property \Wei\Db $db
+ * @property \services\Coll $coll
  */
 class Stat extends \miaoxing\plugin\BaseService
 {
@@ -134,6 +137,59 @@ class Stat extends \miaoxing\plugin\BaseService
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $serviceName
+     * @param array $data
+     * @param array $defaults
+     * @param array $lastTotalRow
+     * @param string $startDate
+     * @param string $endDate
+     * @return array
+     * @todo 减少参数
+     */
+    public function normalize($serviceName, $data, $defaults, $lastTotalRow, $startDate, $endDate)
+    {
+        $dateKey = 'statDate';
+
+        /** @var \miaoxing\plugin\BaseModel $records */
+        $records = wei()->get($serviceName);
+
+        // 生成累积的字段名称
+        $totalFields = $this->getTotalFields($records);
+
+        // 逐个日期补上数据
+        $data = $this->coll->indexBy($data, $dateKey);
+        for ($date = $startDate; $date <= $endDate; $date = date('Y-m-d', strtotime($date) + 86400)) {
+            if (!isset($data[$date])) {
+                $lastTotalRow = array_intersect_key($lastTotalRow, $totalFields);
+                $data[$date] = $lastTotalRow + [$dateKey => $date] + $defaults;
+            }
+            $lastTotalRow = array_intersect_key($data[$date], $totalFields);
+        }
+
+        // 还原key为数字,并按日期排列
+        $data = array_values($data);
+        $data = $this->coll->orderBy($data, $dateKey, SORT_ASC);
+
+        return $data;
+    }
+
+    protected function getTotalFields(BaseModel $records)
+    {
+        $statTotal = $records->getOption('statTotal');
+        if (!$statTotal) {
+            return [];
+        }
+
+        $totalFields = [];
+        $statActions = $records->getOption('statActions');
+        foreach ($statActions as $field) {
+            $totalFields[] = 'total' . ucfirst($field) . 'Count';
+            $totalFields[] = 'total' . ucfirst($field) . 'User';
+        }
+        return array_flip($totalFields);
     }
 
     /**
