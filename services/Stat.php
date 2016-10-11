@@ -48,7 +48,15 @@ class Stat extends \miaoxing\plugin\BaseService
             ->where('createDate BETWEEN ? AND ?', [$startDate, $endDate])
             ->groupBy('createDate, action');
 
-        // 附加统计的字段,如领取卡券的卡券编号,金额,来源
+        // 附加叠加的字段,如金额
+        $sumFields = $records->getOption('statSums');
+        if ($sumFields) {
+            foreach ($sumFields as $field) {
+                $records->addSelect('SUM(' . $field . ') AS ' . $field);
+            }
+        }
+
+        // 附加统计的字段,如领取卡券的卡券编号,来源
         if ($statFields = $records->getOption('statFields')) {
             $records->addSelect($statFields)
                 ->addGroupBy($statFields);
@@ -75,6 +83,7 @@ class Stat extends \miaoxing\plugin\BaseService
 
         $actions = $records->getOption('statActions');
         $statFields = $records->getOption('statFields');
+        $statSums = $records->getOption('statSums');
 
         // 附加创建日期用于生成唯一的索引名称
         array_unshift($statFields, 'createDate');
@@ -92,6 +101,10 @@ class Stat extends \miaoxing\plugin\BaseService
             $actonField = $actions[$row['action']];
             $data[$index][$actonField . 'Count'] = (int)$row['count'];
             $data[$index][$actonField . 'User'] = (int)$row['user'];
+
+            foreach ($statSums as $sum) {
+                $data[$index][$actonField . ucfirst($sum)] = $row[$sum];
+            }
         }
         return $data;
     }
