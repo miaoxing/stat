@@ -11,7 +11,7 @@ use miaoxing\plugin\BaseModel;
 class Stat extends \miaoxing\plugin\BaseService
 {
     protected $providers = [
-        'db' => 'app.db'
+        'db' => 'app.db',
     ];
 
     /**
@@ -99,13 +99,14 @@ class Stat extends \miaoxing\plugin\BaseService
 
             // 合并操作数据
             $actonField = $actions[$row['action']];
-            $data[$index][$actonField . 'Count'] = (int)$row['count'];
-            $data[$index][$actonField . 'User'] = (int)$row['user'];
+            $data[$index][$actonField . 'Count'] = (int) $row['count'];
+            $data[$index][$actonField . 'User'] = (int) $row['user'];
 
             foreach ($statSums as $sum) {
                 $data[$index][$actonField . ucfirst($sum)] = $row[$sum];
             }
         }
+
         return $data;
     }
 
