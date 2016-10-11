@@ -124,6 +124,7 @@ class Stat extends \miaoxing\plugin\BaseService
 
         $actions = $records->getOption('statActions');
         $statFields = $records->getOption('statFields');
+        $statSums = $records->getOption('statSums');
         $statTotal = $records->getOption('statTotal');
 
         foreach ($data as $row) {
@@ -143,6 +144,11 @@ class Stat extends \miaoxing\plugin\BaseService
                     $field = 'total' . ucfirst($action);
                     $stat[$field . 'Count'] = $prevStat[$field . 'Count'] + $stat[$action . 'Count'];
                     $stat[$field . 'User'] = $prevStat[$field . 'User'] + $stat[$action . 'User'];
+
+                    foreach ($statSums as $sum) {
+                        $sumField = $field . ucfirst($sum);
+                        $stat[$sumField] = $prevStat[$sumField] + $stat[$action . ucfirst($sum)];
+                    }
                 }
             }
 
@@ -197,11 +203,17 @@ class Stat extends \miaoxing\plugin\BaseService
         }
 
         $totalFields = [];
+        $statSums = $records->getOption('statSums');
         $statActions = $records->getOption('statActions');
         foreach ($statActions as $field) {
             $totalFields[] = 'total' . ucfirst($field) . 'Count';
             $totalFields[] = 'total' . ucfirst($field) . 'User';
+
+            foreach ($statSums as $sum) {
+                $totalFields[] = 'total' . ucfirst($field) . ucfirst($sum);
+            }
         }
+
         return array_flip($totalFields);
     }
 
