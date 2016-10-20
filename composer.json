@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "miaoxing\\stat\\": ""
+      "Miaoxing\\Stat\\": "src"
     }
   }
 }

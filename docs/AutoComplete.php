@@ -2,7 +2,7 @@
 
 namespace miaoxing\stat\docs {
     /**
-     * @property    \miaoxing\stat\services\Stat $stat 统计服务
+     * @property    \Miaoxing\Stat\Service\Stat $stat 统计服务
      */
     class AutoComplete
     {

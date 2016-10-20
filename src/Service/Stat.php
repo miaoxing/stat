@@ -1,6 +1,6 @@
 <?php
 
-namespace miaoxing\stat\services;
+namespace Miaoxing\Stat\Service;
 
 use miaoxing\plugin\BaseModel;
 
