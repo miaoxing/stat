@@ -1,11 +1,11 @@
 {
   "name": "miaoxing/stat",
   "keywords": [
-    "stat"
+    "miaoxing", "stat"
   ],
   "license": "MIT",
   "require": {
-    "miaoxing/plugin": "@dev"
+    "miaoxing/app": "@dev"
   },
   "autoload": {
     "psr-4": {
