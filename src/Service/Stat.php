@@ -6,7 +6,7 @@ use miaoxing\plugin\BaseModel;
 
 /**
  * @property \Wei\Db $db
- * @property \services\Coll $coll
+ * @property \Miaoxing\App\Service\Coll $coll
  */
 class Stat extends \miaoxing\plugin\BaseService
 {
