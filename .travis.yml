@@ -14,18 +14,25 @@ matrix:
     - php: hhvm
     - php: nightly
 
+services:
+  - memcached
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - node_modules
+
 before_install:
   - phpenv config-add tests/travis.ini
+  - nvm install node
 
 install:
-  - composer require satooshi/php-coveralls --no-interaction
-
-before_script:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS app;'
+  - composer install --no-interaction
+  - bash vendor/miaoxing/plugin/build/install-travis.sh
 
 script:
-  - phpunit --verbose --stderr --coverage-clover build/logs/clover.xml
+  - bash vendor/miaoxing/plugin/build/build-travis.sh --coverage 5
 
 after_success:
-  - travis_retry php vendor/bin/coveralls -v
+  - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+  - travis_retry php coveralls.phar -v --exclude-no-stmt
