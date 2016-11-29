@@ -1,6 +1,7 @@
 <?php
 
 namespace miaoxing\stat\docs {
+
     /**
      * @property    \Miaoxing\Stat\Service\Stat $stat 统计服务
      */
@@ -10,6 +11,7 @@ namespace miaoxing\stat\docs {
 }
 
 namespace {
+
     /**
      * @return \miaoxing\stat\docs\AutoComplete
      */

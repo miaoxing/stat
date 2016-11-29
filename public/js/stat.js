@@ -1,6 +1,6 @@
 define(function () {
   var Stat = function () {
-
+    // do nothing.
   };
 
   $.extend(Stat.prototype, {
@@ -62,7 +62,7 @@ define(function () {
     },
 
     initEvents: function () {
-      var self = this;
+      var that = this;
 
       if (this.bind) {
         return;
@@ -71,7 +71,7 @@ define(function () {
 
       // 点击tab显示图表数据
       this.$('.js-chart-tabs a').on('shown.bs.tab', function () {
-        self.showChart(this);
+        that.showChart(this);
       });
     },
 
@@ -82,10 +82,11 @@ define(function () {
       var target = $(link).attr('href');
       var id = target.substr(1);
       $.each(this.charts, function (key, chart) {
-        if (chart.id == id) {
+        if (chart.id === id) {
           $(target).highcharts(chart);
           return false;
         }
+        return true;
       });
     },
 
@@ -104,7 +105,7 @@ define(function () {
         $.each(chart.series, $.proxy(function (key, row) {
           // 载入数据列数据
           if (row.dataSource) {
-            chart.series[key].data = this.getCol(data, row.dataSource)
+            chart.series[key].data = this.getCol(data, row.dataSource);
           }
         }, this));
 

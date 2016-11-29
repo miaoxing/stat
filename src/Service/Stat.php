@@ -57,7 +57,8 @@ class Stat extends \miaoxing\plugin\BaseService
         }
 
         // 附加统计的字段,如领取卡券的卡券编号,来源
-        if ($statFields = $records->getOption('statFields')) {
+        $statFields = $records->getOption('statFields');
+        if ($statFields) {
             $records->addSelect($statFields)
                 ->addGroupBy($statFields);
         }
