@@ -21,7 +21,7 @@ class Chart extends BaseService
     {
         $result = $right == 0 ? 0 : $left / $right;
 
-        return is_null($scale) ? $result : $this->toFixed($result, $scale);
+        return $scale === null ? $result : $this->toFixed($result, $scale);
     }
 
     public function percentage($left, $right, $scale = 2)
