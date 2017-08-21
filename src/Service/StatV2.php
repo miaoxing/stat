@@ -127,13 +127,13 @@ class StatV2 extends \miaoxing\plugin\BaseService
                     ->findOrInit($values);
 
                 foreach ($actions as $action) {
-                    $field = 'total' . ucfirst($action);
+                    $field = 'total_' . $action;
                     $stat[$field . '_count'] = $prevStat[$field . '_count'] + $stat[$action . '_count'];
-                    $stat[$field . '_user'] = $prevStat[$field . '_user'] + $stat[$action . 'user'];
+                    $stat[$field . '_user'] = $prevStat[$field . '_user'] + $stat[$action . '_user'];
 
                     foreach ($statSums as $sum) {
-                        $sumField = $field . ucfirst($sum);
-                        $stat[$sumField] = $prevStat[$sumField] + $stat[$action . ucfirst($sum)];
+                        $sumField = $field . '_' . $sum;
+                        $stat[$sumField] = $prevStat[$sumField] + $stat[$action . '_' . $sum];
                     }
                 }
             }
