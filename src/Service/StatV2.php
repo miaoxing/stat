@@ -192,11 +192,11 @@ class StatV2 extends \miaoxing\plugin\BaseService
         $statSums = $records->getOption('statSums');
         $statActions = $records->getOption('statActions');
         foreach ($statActions as $field) {
-            $totalFields[] = 'total' . ucfirst($field) . 'Count';
-            $totalFields[] = 'total' . ucfirst($field) . 'User';
+            $totalFields[] = 'total_' . $field . '_count';
+            $totalFields[] = 'total_' . $field . '_user';
 
             foreach ($statSums as $sum) {
-                $totalFields[] = 'total' . ucfirst($field) . ucfirst($sum);
+                $totalFields[] = 'total_' . $field . '_' . $sum;
             }
         }
 
