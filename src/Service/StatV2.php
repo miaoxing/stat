@@ -128,12 +128,21 @@ class StatV2 extends \miaoxing\plugin\BaseService
 
                 foreach ($actions as $action) {
                     $field = 'total_' . $action;
-                    $stat[$field . '_count'] = $prevStat[$field . '_count'] + $stat[$action . '_count'];
-                    $stat[$field . '_user'] = $prevStat[$field . '_user'] + $stat[$action . '_user'];
+
+                    // 允许部分统计字段不记录
+                    if (isset($prevStat[$field . '_count'])) {
+                        $stat[$field . '_count'] = $prevStat[$field . '_count'] + $stat[$action . '_count'];
+                    }
+
+                    if (isset($prevStat[$field . '_user'])) {
+                        $stat[$field . '_user'] = $prevStat[$field . '_user'] + $stat[$action . '_user'];
+                    }
 
                     foreach ($statSums as $sum) {
                         $sumField = $field . '_' . $sum;
-                        $stat[$sumField] = $prevStat[$sumField] + $stat[$action . '_' . $sum];
+                        if (isset($prevStat[$sumField])) {
+                            $stat[$sumField] = $prevStat[$sumField] + $stat[$action . '_' . $sum];
+                        }
                     }
                 }
             }
@@ -151,10 +160,11 @@ class StatV2 extends \miaoxing\plugin\BaseService
      * @param array $lastTotalRow
      * @param string $startDate
      * @param string $endDate
+     * @param int $offset
      * @return array
      * @todo 减少参数
      */
-    public function normalize($serviceName, $data, $defaults, $lastTotalRow, $startDate, $endDate)
+    public function normalize($serviceName, $data, $defaults, $lastTotalRow, $startDate, $endDate, $offset = 86400)
     {
         $dateKey = 'stat_date';
 
@@ -166,7 +176,7 @@ class StatV2 extends \miaoxing\plugin\BaseService
 
         // 逐个日期补上数据
         $data = $this->coll->indexBy($data, $dateKey);
-        for ($date = $startDate; $date <= $endDate; $date = date('Y-m-d', strtotime($date) + 86400)) {
+        for ($date = $startDate; $date <= $endDate; $date = date('Y-m-d', strtotime($date) + $offset)) {
             if (!isset($data[$date])) {
                 $lastTotalRow = array_intersect_key($lastTotalRow, $totalFields);
                 $data[$date] = $lastTotalRow + [$dateKey => $date] + $defaults;
