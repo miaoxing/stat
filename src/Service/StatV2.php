@@ -22,15 +22,16 @@ class StatV2 extends \miaoxing\plugin\BaseService
      * @param string $serviceName
      * @param string $startDate
      * @param string $endDate
-     * @return \miaoxing\plugin\BaseModel
+     * @param string $dateColumn
+     * @return BaseModel
      */
-    public function createQuery($serviceName, $startDate, $endDate)
+    public function createQuery($serviceName, $startDate, $endDate, $dateColumn = 'created_date')
     {
         /** @var \miaoxing\plugin\BaseModel $records */
         $records = wei()->get($serviceName);
-        $records->select('COUNT(1) AS count, COUNT(DISTINCT(user_id)) as user, created_date, action')
-            ->where('created_date BETWEEN ? AND ?', [$startDate, $endDate])
-            ->groupBy('created_date, action');
+        $records->select('COUNT(1) AS count, COUNT(DISTINCT(user_id)) as user, ' . $dateColumn . ', action')
+            ->where($dateColumn . ' BETWEEN ? AND ?', [$startDate, $endDate])
+            ->groupBy($dateColumn . ', action');
 
         // 附加叠加的字段,如金额
         $sumFields = $records->getOption('statSums');
@@ -59,9 +60,10 @@ class StatV2 extends \miaoxing\plugin\BaseService
      *
      * @param string $serviceName
      * @param array $logs 从操作记录表读出的数据
+     * @param string $dateColumn
      * @return array
      */
-    public function format($serviceName, array $logs)
+    public function format($serviceName, array $logs, $dateColumn = 'created_date')
     {
         /** @var \miaoxing\plugin\BaseModel $records */
         $records = wei()->get($serviceName);
@@ -71,7 +73,7 @@ class StatV2 extends \miaoxing\plugin\BaseService
         $statSums = $records->getOption('statSums');
 
         // 附加创建日期用于生成唯一的索引名称
-        array_unshift($statFields, 'created_date');
+        array_unshift($statFields, $dateColumn);
 
         $data = [];
         foreach ($logs as $row) {
@@ -101,9 +103,10 @@ class StatV2 extends \miaoxing\plugin\BaseService
      * @param string $serviceName
      * @param array $data
      * @param string $table
+     * @param string $dateColumn
      * @return $this
      */
-    public function save($serviceName, $data, $table)
+    public function save($serviceName, $data, $table, $dateColumn = 'created_date')
     {
         /** @var \miaoxing\plugin\BaseModel $records */
         $records = wei()->get($serviceName);
@@ -114,7 +117,7 @@ class StatV2 extends \miaoxing\plugin\BaseService
         $statTotal = $records->getOption('statTotal');
 
         foreach ($data as $row) {
-            $date = $row['created_date'];
+            $date = $row[$dateColumn];
 
             $values = $this->getArrayValuesByKeys($row, $statFields);
             $stat = $this->$table()->findOrInit(['stat_date' => $date] + $values);
@@ -176,7 +179,8 @@ class StatV2 extends \miaoxing\plugin\BaseService
 
         // 逐个日期补上数据
         $data = $this->coll->indexBy($data, $dateKey);
-        for ($date = $startDate; $date <= $endDate; $date = date('Y-m-d', strtotime($date) + $offset)) {
+
+        for ($date = $startDate; $date <= $endDate; $date = $this->addDate($date, $offset)) {
             if (!isset($data[$date])) {
                 $lastTotalRow = array_intersect_key($lastTotalRow, $totalFields);
                 $data[$date] = $lastTotalRow + [$dateKey => $date] + $defaults;
@@ -189,6 +193,19 @@ class StatV2 extends \miaoxing\plugin\BaseService
         $data = $this->coll->orderBy($data, $dateKey, SORT_ASC);
 
         return $data;
+    }
+
+    protected function addDate($date, $offset)
+    {
+        if (is_int($offset)) {
+            // 如 86400
+            $time = strtotime($date) + $offset;
+        } else {
+            // 如 +1 month
+            $time = strtotime($offset, strtotime($date));
+        }
+
+        return date('Y-m-d', $time);
     }
 
     protected function getTotalFields(BaseModel $records)
@@ -223,5 +240,18 @@ class StatV2 extends \miaoxing\plugin\BaseService
     protected function getArrayValuesByKeys($array, $keys)
     {
         return array_intersect_key($array, array_flip($keys));
+    }
+
+    public function getFirstDayOfWeek($now = null)
+    {
+        // 传入null会认为是0,默认传入当前时间
+        $now || $now = time();
+
+        return date('Y-m-d', strtotime('-' . date('w', $now) . ' days', $now));
+    }
+
+    public function getFirstDayOfMonth($now = null)
+    {
+        return date('Y-m-01', $now ?: time());
     }
 }
