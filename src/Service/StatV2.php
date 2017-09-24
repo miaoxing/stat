@@ -269,7 +269,7 @@ class StatV2 extends \miaoxing\plugin\BaseService
 
         // 0 = Sunday
         if (date('w', $time) == 0) {
-            $week++;
+            ++$week;
         }
 
         return $week;
