@@ -254,4 +254,24 @@ class StatV2 extends \miaoxing\plugin\BaseService
     {
         return date('Y-m-01', $now ?: time());
     }
+
+    /**
+     * 获取周数
+     *
+     * @param string $date
+     * @return int
+     * @link https://stackoverflow.com/questions/16057039/how-to-get-weeks-starting-on-sunday
+     */
+    public function getWeekNumber($date)
+    {
+        $time = strtotime($date);
+        $week = intval(date('W', $time));
+
+        // 0 = Sunday
+        if (date('w', $time) == 0) {
+            $week++;
+        }
+
+        return $week;
+    }
 }
