@@ -2,7 +2,7 @@
 
 namespace Miaoxing\Stat\Service;
 
-use miaoxing\plugin\BaseModel;
+use Miaoxing\Plugin\BaseModel;
 
 /**
  * 和原版区别在于字段名使用下划线
@@ -27,7 +27,7 @@ class StatV2 extends \Miaoxing\Plugin\BaseService
      */
     public function createQuery($serviceName, $startDate, $endDate, $dateColumn = 'created_date')
     {
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
         $records->select('COUNT(1) AS count, COUNT(DISTINCT(user_id)) as user, ' . $dateColumn . ', action')
             ->where($dateColumn . ' BETWEEN ? AND ?', [$startDate, $endDate])
@@ -65,7 +65,7 @@ class StatV2 extends \Miaoxing\Plugin\BaseService
      */
     public function format($serviceName, array $logs, $dateColumn = 'created_date')
     {
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
 
         $actions = $records->getOption('statActions');
@@ -108,7 +108,7 @@ class StatV2 extends \Miaoxing\Plugin\BaseService
      */
     public function save($serviceName, $data, $table, $dateColumn = 'created_date')
     {
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
 
         $actions = $records->getOption('statActions');
@@ -171,7 +171,7 @@ class StatV2 extends \Miaoxing\Plugin\BaseService
     {
         $dateKey = 'stat_date';
 
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
 
         // 生成累积的字段名称

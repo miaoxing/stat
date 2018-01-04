@@ -2,7 +2,7 @@
 
 namespace Miaoxing\Stat\Service;
 
-use miaoxing\plugin\BaseModel;
+use Miaoxing\Plugin\BaseModel;
 
 /**
  * @property \Wei\Db $db
@@ -38,11 +38,11 @@ class Stat extends \Miaoxing\Plugin\BaseService
      * @param string $serviceName
      * @param string $startDate
      * @param string $endDate
-     * @return \miaoxing\plugin\BaseModel
+     * @return \Miaoxing\Plugin\BaseModel
      */
     public function createQuery($serviceName, $startDate, $endDate)
     {
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
         $records->select('COUNT(1) AS count, COUNT(DISTINCT(userId)) as user, createDate, action')
             ->where('createDate BETWEEN ? AND ?', [$startDate, $endDate])
@@ -79,7 +79,7 @@ class Stat extends \Miaoxing\Plugin\BaseService
      */
     public function format($serviceName, array $logs)
     {
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
 
         $actions = $records->getOption('statActions');
@@ -121,7 +121,7 @@ class Stat extends \Miaoxing\Plugin\BaseService
      */
     public function save($serviceName, $data, $table)
     {
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
 
         $actions = $records->getOption('statActions');
@@ -174,7 +174,7 @@ class Stat extends \Miaoxing\Plugin\BaseService
     {
         $dateKey = 'statDate';
 
-        /** @var \miaoxing\plugin\BaseModel $records */
+        /** @var \Miaoxing\Plugin\BaseModel $records */
         $records = wei()->get($serviceName);
 
         // 生成累积的字段名称
