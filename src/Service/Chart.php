@@ -2,7 +2,7 @@
 
 namespace Miaoxing\Stat\Service;
 
-use miaoxing\plugin\BaseService;
+use Miaoxing\Plugin\BaseService;
 
 /**
  * 构造图表数据的辅助服务

@@ -10,7 +10,7 @@ use miaoxing\plugin\BaseModel;
  * @property \Wei\Db $db
  * @property \Miaoxing\App\Service\Coll $coll
  */
-class StatV2 extends \miaoxing\plugin\BaseService
+class StatV2 extends \Miaoxing\Plugin\BaseService
 {
     protected $providers = [
         'db' => 'app.db',
