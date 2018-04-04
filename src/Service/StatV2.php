@@ -16,6 +16,19 @@ class StatV2 extends \Miaoxing\Plugin\BaseService
         'db' => 'app.db',
     ];
 
+    public function log(BaseModel $model, $data)
+    {
+        if (!isset($data['userId'])) {
+            $data['userId'] = wei()->curUser['id'];
+        }
+
+        if (!isset($data['createdDate'])) {
+            $data['createdDate'] = wei()->time->today();
+        }
+
+        $model->save($data);
+    }
+
     /**
      * 创建查询,用于统计的第一步
      *
@@ -28,9 +41,9 @@ class StatV2 extends \Miaoxing\Plugin\BaseService
     public function createQuery($serviceName, $startDate, $endDate, $dateColumn = 'created_date')
     {
         /** @var \Miaoxing\Plugin\BaseModel $records */
-        $records = wei()->get($serviceName);
+        $records = wei()->invoke($serviceName);
         $records->select('COUNT(1) AS count, COUNT(DISTINCT(user_id)) as user, ' . $dateColumn . ', action')
-            ->where($dateColumn . ' BETWEEN ? AND ?', [$startDate, $endDate])
+            ->andWhere($dateColumn . ' BETWEEN ? AND ?', [$startDate, $endDate])
             ->groupBy($dateColumn . ', action');
 
         // 附加叠加的字段,如金额
