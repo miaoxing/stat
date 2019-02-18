@@ -58,7 +58,7 @@ define(function () {
 
       this.initEvents();
 
-      this.showChart(this.$('.js-chart-tabs .active a'));
+      this.showChart(this.$('.js-chart-tabs .active'));
     },
 
     initEvents: function () {
